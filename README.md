@@ -4,9 +4,9 @@ spddl (Spotify Direct Download) is a Python script that allows you to download t
 
 ## Screenshots
 
-![image](https://github.com/user-attachments/assets/9fe83d14-7b3d-42e5-9746-6e505c9afc65)
+![image](https://github.com/user-attachments/assets/86944ff7-82ac-40bb-aafa-10a5c20a3b21)
 
-![image](https://github.com/user-attachments/assets/0e8a1ffb-3b64-4ad2-aa19-e0d5138536a1)
+![image](https://github.com/user-attachments/assets/0c0a1af1-ec85-4591-be33-49329441b025)
 
 ## Features
 
