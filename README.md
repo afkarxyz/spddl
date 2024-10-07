@@ -1,6 +1,6 @@
-# spddl - Spotify Direct Download
+# spddl
 
-spddl (Spotify Direct Download) is a Python script that allows you to download tracks, albums, and playlists directly from Spotify.
+**spddl** (Spotify Direct Download) is a Python script that allows you to download tracks, albums, and playlists directly from Spotify.
 
 ## Screenshots
 
