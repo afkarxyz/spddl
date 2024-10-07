@@ -6,15 +6,17 @@ from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, APIC
 
 # ASCII Art Title
-TITLE = r"""   _______  ___  ___  __ 
-  / __/ _ \/ _ \/ _ \/ / 
- _\ \/ ___/ // / // / /__
-/___/_/  /____/____/____/
+TITLE = r"""                   __    ____
+   _________  ____/ /___/ / /
+  / ___/ __ \/ __  / __  / / 
+ (__  ) /_/ / /_/ / /_/ / /  
+/____/ .___/\__,_/\__,_/_/   
+    /_/                      
                                
 Spotify Direct Download
 """
 print(TITLE)
-print("Welcome to SPDDL - Your Spotify Track Saver!")
+print("Welcome to spddl - Your Spotify Track Saver!")
 print("=" * 44)
 print()
 
@@ -242,7 +244,7 @@ def main():
                 print(" Skipped (already exists)")
     
     print("\nDownload completed!")
-    print("Thank you for using SPDDL!")
+    print("Thank you for using spddl!")
     print("=" * 40)
 
 if __name__ == "__main__":
