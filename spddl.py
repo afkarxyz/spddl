@@ -20,8 +20,8 @@ TITLE = f"""{GREEN}                   __    ____
 Spotify Direct Download{RESET}
 """
 print(TITLE)
-print(f"{BLUE}Welcome to spddl - Your Spotify Track Saver!{RESET}")
-print(f"{BLUE}{'=' * 44}{RESET}")
+print("Welcome to spddl - Your Spotify Track Saver!")
+print("=" * 44)
 print()
 
 CUSTOM_HEADER = {
@@ -214,7 +214,7 @@ def main():
     url = input("Enter Spotify track, album, or playlist URL: ")
     
     print("\nChoose download method:")
-    print(f"{GREEN}1. SpotifyDown - 320 kbps (default){RESET}")
+    print(f"{GREEN}1. SpotifyDown - 320 kbps{RESET} (default)")
     print(f"{BLUE}2. Yank - 128 kbps{RESET}")
     choice = input("Enter your choice (1 or 2), or press Enter for default: ")
     
@@ -296,8 +296,8 @@ def main():
                 print(" Skipped (already exists)")
     
     print(f"\n{GREEN}Download completed!{RESET}")
-    print(f"{BLUE}Thank you for using spddl!{RESET}")
-    print(f"{BLUE}{'=' * 26}{RESET}")
+    print("Thank you for using spddl!")
+    print("=" * 26)
 
 if __name__ == "__main__":
     main()
