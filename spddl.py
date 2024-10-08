@@ -5,19 +5,23 @@ from dataclasses import dataclass
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, APIC
 
-# ASCII Art Title
-TITLE = r"""                   __    ____
+# ASCII Art
+GREEN = "\033[38;2;44;194;97m"
+BLUE = "\033[38;2;32;127;222m"
+RESET = "\033[0m"
+
+TITLE = f"""{GREEN}                   __    ____
    _________  ____/ /___/ / /
   / ___/ __ \/ __  / __  / / 
  (__  ) /_/ / /_/ / /_/ / /  
 /____/ .___/\__,_/\__,_/_/   
     /_/                      
                                
-Spotify Direct Download
+Spotify Direct Download{RESET}
 """
 print(TITLE)
-print("Welcome to spddl - Your Spotify Track Saver!")
-print("=" * 44)
+print(f"{BLUE}Welcome to spddl - Your Spotify Track Saver!{RESET}")
+print(f"{BLUE}{'=' * 44}{RESET}")
 print()
 
 CUSTOM_HEADER = {
@@ -210,8 +214,8 @@ def main():
     url = input("Enter Spotify track, album, or playlist URL: ")
     
     print("\nChoose download method:")
-    print("1. SpotifyDown - 320 kbps (default)")
-    print("2. Yank - 128 kbps")
+    print(f"{GREEN}1. SpotifyDown - 320 kbps (default){RESET}")
+    print(f"{BLUE}2. Yank - 128 kbps{RESET}")
     choice = input("Enter your choice (1 or 2), or press Enter for default: ")
     
     if choice == "2":
@@ -291,9 +295,9 @@ def main():
             else:
                 print(" Skipped (already exists)")
     
-    print("\nDownload completed!")
-    print("Thank you for using spddl!")
-    print("=" * 40)
+    print(f"\n{GREEN}Download completed!{RESET}")
+    print(f"{BLUE}Thank you for using spddl!{RESET}")
+    print(f"{BLUE}{'=' * 26}{RESET}")
 
 if __name__ == "__main__":
     main()
