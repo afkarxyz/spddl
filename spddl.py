@@ -97,6 +97,54 @@ def get_playlist_info(link):
         link=f"https://open.spotify.com/track/{track['id']}"
     ) for track in track_list], playlist_name
 
+def get_widget_info(link):
+    """
+    Fetches widget information for a Spotify track, album, or playlist.
+    
+    Args:
+    link (str): Spotify URL for a track, album, or playlist
+
+    Returns:
+    dict: A dictionary containing widget information (cover, title, artist, releaseDate)
+    """
+    CUSTOM_HEADER = {
+        'Host': 'api.spotifydown.com',
+        'Referer': 'https://spotifydown.com/',
+        'Origin': 'https://spotifydown.com',
+    }
+
+    item_type = ""
+    if "track" in link:
+        item_type = "track"
+    elif "album" in link:
+        item_type = "album"
+    elif "playlist" in link:
+        item_type = "playlist"
+    else:
+        raise ValueError("Invalid Spotify link. Must be a track, album, or playlist URL.")
+
+    item_id = link.split("/")[-1].split("?")[0]
+    api_url = f"https://api.spotifydown.com/metadata/{item_type}/{item_id}"
+
+    response = requests.get(api_url, headers=CUSTOM_HEADER)
+    
+    if response.status_code != 200:
+        raise Exception(f"Failed to fetch data: HTTP {response.status_code}")
+
+    data = response.json()
+
+    if not data['success']:
+        raise Exception(f"API returned an error: {data.get('message', 'Unknown error')}")
+
+    widget_info = {
+        "cover": data.get("cover", ""),
+        "title": data.get("title", ""),
+        "artist": data.get("artists", ""),
+        "releaseDate": data.get("releaseDate", "")
+    }
+
+    return widget_info
+
 def download_track_spotifydown(track, outpath):
     trackname = f"{track.title} - {track.artists}"
     print(f"Downloading: {trackname}", end="", flush=True)
