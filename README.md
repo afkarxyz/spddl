@@ -7,7 +7,6 @@
 ## Features
 
 - Download individual tracks, entire albums, or playlists from Spotify
-- Choose between two download methods: SpotifyDown (320 kbps) or Yank (128 kbps)
 - Automatic metadata and cover art embedding
 - User-friendly command-line interface
 
@@ -34,10 +33,9 @@ To use spddl, simply run the Code Runner.bat file:
 ## How it works
 
 1. Enter a Spotify track, album, or playlist URL when prompted
-2. Choose your preferred download method (SpotifyDown or Yank)
-3. For albums and playlists, you can choose to download all tracks or select specific ones
-4. The script will download the tracks, saving them as MP3 files in the appropriate folders
-5. Metadata and cover art are automatically added to the downloaded files
+2. For albums and playlists, you can choose to download all tracks or select specific ones
+3. The script will download the tracks, saving them as MP3 files in the appropriate folders
+4. Metadata and cover art are automatically added to the downloaded files
 
 ## Legal Notice
 
