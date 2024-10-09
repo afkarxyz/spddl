@@ -29,7 +29,7 @@ pip install requests mutagen
 To use spddl, simply run the Code Runner.bat file:
 
 1. Double-click on `Code Runner.bat`
-2. Follow the on-screen prompts to enter the Spotify URL and choose your download method
+2. Follow the on-screen prompts to enter the Spotify URL
 
 ## How it works
 
