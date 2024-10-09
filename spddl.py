@@ -7,7 +7,6 @@ from mutagen.id3 import ID3, APIC
 
 # ASCII Art
 GREEN = "\033[38;2;44;194;97m"
-BLUE = "\033[38;2;32;127;222m"
 RESET = "\033[0m"
 
 TITLE = f"""{GREEN}                   __    ____
@@ -111,12 +110,6 @@ def get_widget_info(link):
     Returns:
     dict: A dictionary containing widget information (cover, title, artist, releaseDate)
     """
-    CUSTOM_HEADER = {
-        'Host': 'api.spotifydown.com',
-        'Referer': 'https://spotifydown.com/',
-        'Origin': 'https://spotifydown.com',
-    }
-
     item_type = ""
     if "track" in link:
         item_type = "track"
@@ -149,7 +142,7 @@ def get_widget_info(link):
 
     return widget_info
 
-def download_track_spotifydown(track, outpath):
+def download_track(track, outpath):
     trackname = f"{track.title} - {track.artists}"
     print(f"Downloading: {trackname}", end="", flush=True)
     resp = get_track_info(track.link)
@@ -162,17 +155,6 @@ def download_track_spotifydown(track, outpath):
         if cover_url:
             cover_art = requests.get(cover_url).content
             attach_cover_art(trackname, cover_art, outpath)
-        print(" Downloaded")
-    else:
-        print(" Skipped (already exists)")
-
-def download_track_yank(track, outpath):
-    track_id = track.link.split("/")[-1]
-    trackname = f"{track.title} - {track.artists}"
-    print(f"Downloading: {trackname}", end="", flush=True)
-    yank_url = f"https://yank.g3v.co.uk/track/{track_id}"
-    
-    if save_audio(trackname, yank_url, outpath):
         print(" Downloaded")
     else:
         print(" Skipped (already exists)")
@@ -213,16 +195,6 @@ def main():
     
     url = input("Enter Spotify track, album, or playlist URL: ")
     
-    print("\nChoose download method:")
-    print(f"{GREEN}1. SpotifyDown - 320 kbps{RESET} (default)")
-    print(f"{BLUE}2. Yank - 128 kbps{RESET}")
-    choice = input("Enter your choice (1 or 2), or press Enter for default: ")
-    
-    if choice == "2":
-        download_method = "yank"
-    else:
-        download_method = "spotifydown"
-    
     if "album" in url:
         songs, album_name = get_album_info(url)
         print("\nTracks in album:")
@@ -241,10 +213,7 @@ def main():
         os.makedirs(outpath, exist_ok=True)
         
         for song in selected_songs:
-            if download_method == "yank":
-                download_track_yank(song, outpath)
-            else:
-                download_track_spotifydown(song, outpath)
+            download_track(song, outpath)
     elif "playlist" in url:
         songs, playlist_name = get_playlist_info(url)
         print("\nTracks in playlist:")
@@ -263,37 +232,20 @@ def main():
         os.makedirs(outpath, exist_ok=True)
         
         for song in selected_songs:
-            if download_method == "yank":
-                download_track_yank(song, outpath)
-            else:
-                download_track_spotifydown(song, outpath)
+            download_track(song, outpath)
     else:  
-        if download_method == "yank":
-            track_id = url.split("/")[-1].split("?")[0]
-            yank_url = f"https://yank.g3v.co.uk/track/{track_id}"
-            resp = get_track_info(url)
-            if resp['success'] == False:
-                print(f"Error: {resp['message']}")
-                return
-            trackname = f"{resp['metadata']['title']} - {resp['metadata']['artists']}"
-            print(f"Downloading: {trackname}", end="", flush=True)
-            if save_audio(trackname, yank_url, outpath):
-                print(" Downloaded")
-            else:
-                print(" Skipped (already exists)")
+        resp = get_track_info(url)
+        if resp['success'] == False:
+            print(f"Error: {resp['message']}")
+            return
+        trackname = f"{resp['metadata']['title']} - {resp['metadata']['artists']}"
+        print(f"Downloading: {trackname}", end="", flush=True)
+        if save_audio(trackname, resp['link'], outpath):
+            cover_art = requests.get(resp['metadata']['cover']).content
+            attach_cover_art(trackname, cover_art, outpath)
+            print(" Downloaded")
         else:
-            resp = get_track_info(url)
-            if resp['success'] == False:
-                print(f"Error: {resp['message']}")
-                return
-            trackname = f"{resp['metadata']['title']} - {resp['metadata']['artists']}"
-            print(f"Downloading: {trackname}", end="", flush=True)
-            if save_audio(trackname, resp['link'], outpath):
-                cover_art = requests.get(resp['metadata']['cover']).content
-                attach_cover_art(trackname, cover_art, outpath)
-                print(" Downloaded")
-            else:
-                print(" Skipped (already exists)")
+            print(" Skipped (already exists)")
     
     print(f"\n{GREEN}Download completed!{RESET}")
     print("Thank you for using spddl!")
