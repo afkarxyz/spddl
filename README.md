@@ -7,7 +7,7 @@
 ## Features
 
 - Download individual tracks, entire albums, or playlists from Spotify
-- High-quality audio download at **320 kbps** for the best listening experience
+- High-quality audio download at `320 kbps` for the best listening experience
 - Automatic metadata and cover art embedding
 - User-friendly command-line interface
 - No Spotify account required
