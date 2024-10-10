@@ -32,13 +32,6 @@ To use spddl, simply run the Code Runner.bat file:
 1. Double-click on `Code Runner.bat`
 2. Follow the on-screen prompts to enter the Spotify URL
 
-## How it works
-
-1. Enter a Spotify track, album, or playlist URL when prompted
-2. For albums and playlists, you can choose to download all tracks or select specific ones
-3. The script will download the tracks, saving them as MP3 files in the appropriate folders
-4. Metadata and cover art are automatically added to the downloaded files
-
 ## Legal Notice
 
 This tool is for educational purposes only. Please respect copyright laws and Spotify's terms of service. Support artists by using official platforms to purchase their music.
