@@ -1,13 +1,12 @@
 # spddl
 
-**spddl** is a Python script that allows users to download tracks, albums, and playlists directly from Spotify using an API created by SpotifyDown.com
+**spddl** is a Python script that allows users to download tracks, albums, and playlists directly from Spotify.
 
 ![image](https://github.com/user-attachments/assets/5e23249e-f6bf-48d9-815f-5af8608c5128)
 
 ## Features
 
 - Download individual tracks, entire albums, or playlists from Spotify
-- High-quality audio download at `320 kbps` for the best listening experience
 - Automatic metadata and cover art embedding
 - User-friendly command-line interface
 - No Spotify account required
@@ -17,12 +16,11 @@
 - Python 3.6 or higher
 - Required Python packages:
   - requests
-  - mutagen
 
 Install the required packages using pip:
 
 ```
-pip install requests mutagen
+pip install requests
 ```
 
 ## Usage
