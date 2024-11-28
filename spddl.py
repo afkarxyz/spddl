@@ -5,6 +5,8 @@ import re
 from dataclasses import dataclass
 
 GREEN = "\033[38;2;44;194;97m"
+RED = "\033[38;2;255;0;0m"
+ORANGE = "\033[38;2;255;165;0m"
 RESET = "\033[0m"
 
 TITLE = f"""{GREEN}                   __    ____
@@ -39,13 +41,13 @@ def fetch_track_metadata(link, max_retries=3):
     track_id = link.split("/")[-1].split("?")[0]
     for attempt in range(max_retries):
         try:
-            response = requests.get(f"https://spotifyapis.vercel.app/v1/track/{track_id}")
+            response = requests.get(f"https://spotifyapis.vercel.app/track/{track_id}")
             response.raise_for_status()
-            data = response.json()
+            data = response.json()['track_info'][0]
             return TrackMetadata(
                 title=normalize_filename(data['title']),
-                artists=normalize_filename(data['artists']),
-                tid=data['id']
+                artists=normalize_filename(', '.join(data['artists'])),
+                tid=track_id
             )
         except requests.RequestException as e:
             if attempt < max_retries - 1:
@@ -59,20 +61,20 @@ def fetch_album_metadata(link, max_retries=3):
     album_id = link.split("/")[-1].split("?")[0]
     for attempt in range(max_retries):
         try:
-            response = requests.get(f"https://spotifyapis.vercel.app/v1/album/{album_id}")
+            response = requests.get(f"https://spotifyapis.vercel.app/album/{album_id}")
             response.raise_for_status()
             data = response.json()
             
-            album_name = data['album']['title']
-            print(f"Album: {album_name} by {data['album']['artist']}")
+            album_name = data['album_info']['title']
+            print(f"Album: {album_name} by {data['album_info']['owner']}")
             print("Getting songs from album...")
             
             return [TrackMetadata(
                 title=normalize_filename(track['title']),
-                artists=normalize_filename(track['artists']),
+                artists=normalize_filename(', '.join(track['artists'])),
                 album=album_name,
                 tid=track['id']
-            ) for track in data['tracks']], album_name
+            ) for track in data['track_list']], album_name
         except requests.RequestException as e:
             if attempt < max_retries - 1:
                 print(f"Error fetching album metadata. Retrying... (Attempt {attempt + 2}/{max_retries})")
@@ -85,19 +87,19 @@ def fetch_playlist_metadata(link, max_retries=3):
     playlist_id = link.split("/")[-1].split("?")[0]
     for attempt in range(max_retries):
         try:
-            response = requests.get(f"https://spotifyapis.vercel.app/v1/playlist/{playlist_id}")
+            response = requests.get(f"https://spotifyapis.vercel.app/playlist/{playlist_id}")
             response.raise_for_status()
             data = response.json()
             
-            playlist_name = data['playlist']['title']
-            print(f"Playlist: {playlist_name} by {data['playlist']['owner']}")
+            playlist_name = data['playlist_info']['title']
+            print(f"Playlist: {playlist_name} by {data['playlist_info']['owner']}")
             print("Getting songs from playlist...")
             
             return [TrackMetadata(
                 title=normalize_filename(track['title']),
-                artists=normalize_filename(track['artists']),
+                artists=normalize_filename(', '.join(track['artists'])),
                 tid=track['id']
-            ) for track in data['tracks']], playlist_name
+            ) for track in data['track_list']], playlist_name
         except requests.RequestException as e:
             if attempt < max_retries - 1:
                 print(f"Error fetching playlist metadata. Retrying... (Attempt {attempt + 2}/{max_retries})")
@@ -113,17 +115,17 @@ def download_track(track, outpath, max_retries=3):
     for attempt in range(max_retries):
         try:
             if persist_audio_file(trackname, track.tid, outpath):
-                print(" Downloaded")
+                print(f"{GREEN} Downloaded{RESET}")
                 return True
             else:
-                print(" Skipped (already exists)")
+                print(f"{ORANGE} Skipped (already exists){RESET}")
                 return True
         except requests.RequestException as e:
             if attempt < max_retries - 1:
-                print(f" Error downloading. Retrying... (Attempt {attempt + 2}/{max_retries})")
+                print(f"{ORANGE} Error downloading. Retrying... (Attempt {attempt + 2}/{max_retries}){RESET}")
                 time.sleep(2)
             else:
-                print(f" Failed to download after {max_retries} attempts.")
+                print(f"{RED} Failed to download after {max_retries} attempts.{RESET}")
                 return False
 
 def persist_audio_file(trackname, tid, outpath):
@@ -148,7 +150,7 @@ def main():
     if "album" in url:
         songs, album_name = fetch_album_metadata(url)
         if songs is None:
-            print("Failed to fetch album. Exiting.")
+            print(f"{RED}Failed to fetch album. Exiting.{RESET}")
             return
         print("\nTracks in album:")
         for i, song in enumerate(songs, 1):
@@ -165,12 +167,22 @@ def main():
         outpath = os.path.join(outpath, album_folder)
         os.makedirs(outpath, exist_ok=True)
         
+        failed_downloads = 0
         for song in selected_songs:
-            download_track(song, outpath)
+            if not download_track(song, outpath):
+                failed_downloads += 1
+        
+        if failed_downloads == len(selected_songs):
+            print(f"\n{RED}Download failed: All tracks failed to download.{RESET}")
+        elif failed_downloads > 0:
+            print(f"\n{ORANGE}Download partially failed: {failed_downloads} out of {len(selected_songs)} tracks failed to download.{RESET}")
+        else:
+            print(f"\n{GREEN}Download completed successfully!{RESET}")
+    
     elif "playlist" in url:
         songs, playlist_name = fetch_playlist_metadata(url)
         if songs is None:
-            print("Failed to fetch playlist. Exiting.")
+            print(f"{RED}Failed to fetch playlist. Exiting.{RESET}")
             return
         print("\nTracks in playlist:")
         for i, song in enumerate(songs, 1):
@@ -187,16 +199,28 @@ def main():
         outpath = os.path.join(outpath, playlist_folder)
         os.makedirs(outpath, exist_ok=True)
         
+        failed_downloads = 0
         for song in selected_songs:
-            download_track(song, outpath)
-    else:  # Single track
+            if not download_track(song, outpath):
+                failed_downloads += 1
+        
+        if failed_downloads == len(selected_songs):
+            print(f"\n{RED}Download failed: All tracks failed to download.{RESET}")
+        elif failed_downloads > 0:
+            print(f"\n{ORANGE}Download partially failed: {failed_downloads} out of {len(selected_songs)} tracks failed to download.{RESET}")
+        else:
+            print(f"\n{GREEN}Download completed successfully!{RESET}")
+    
+    else:
         track = fetch_track_metadata(url)
         if track is None:
-            print(f"Error: Unable to fetch track metadata.")
+            print(f"{RED}Error: Unable to fetch track metadata.{RESET}")
             return
-        download_track(track, outpath)
+        if not download_track(track, outpath):
+            print(f"\n{RED}Download failed: The track failed to download.{RESET}")
+        else:
+            print(f"\n{GREEN}Download completed successfully!{RESET}")
     
-    print(f"\n{GREEN}Download completed!{RESET}")
     print("Thank you for using spddl!")
     print("=" * 26)
 
