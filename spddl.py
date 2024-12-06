@@ -43,10 +43,10 @@ def fetch_track_metadata(link, max_retries=3):
         try:
             response = requests.get(f"https://spotifyapis.vercel.app/track/{track_id}")
             response.raise_for_status()
-            data = response.json()['track_info'][0]
+            data = response.json()
             return TrackMetadata(
                 title=normalize_filename(data['title']),
-                artists=normalize_filename(', '.join(data['artists'])),
+                artists=normalize_filename(data['artist']),
                 tid=track_id
             )
         except requests.RequestException as e:
