@@ -11,13 +11,9 @@
 - User-friendly command-line interface
 - No Spotify account required
 
-## Prerequisites
+## Installation
 
-- Python 3.6 or higher
-- Required Python packages:
-  - requests
-
-Install the required packages using pip:
+Install the required package:
 
 ```
 pip install requests
