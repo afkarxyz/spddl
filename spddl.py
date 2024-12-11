@@ -31,6 +31,7 @@ class TrackMetadata:
     artists: str
     album: str = "Unknown Album"
     tid: str = ""
+    cover: str = ""
 
 def normalize_filename(name):
     name = re.sub(FILENAME_SANITIZATION_PATTERN, '', name)
@@ -41,13 +42,14 @@ def fetch_track_metadata(link, max_retries=3):
     track_id = link.split("/")[-1].split("?")[0]
     for attempt in range(max_retries):
         try:
-            response = requests.get(f"https://spotifyapis.vercel.app/track/{track_id}")
+            response = requests.get(f"https://spotapis.vercel.app/track/{track_id}")
             response.raise_for_status()
             data = response.json()
             return TrackMetadata(
                 title=normalize_filename(data['title']),
                 artists=normalize_filename(data['artist']),
-                tid=track_id
+                tid=track_id,
+                cover=data.get('cover', '')
             )
         except requests.RequestException as e:
             if attempt < max_retries - 1:
@@ -61,20 +63,22 @@ def fetch_album_metadata(link, max_retries=3):
     album_id = link.split("/")[-1].split("?")[0]
     for attempt in range(max_retries):
         try:
-            response = requests.get(f"https://spotifyapis.vercel.app/album/{album_id}")
+            response = requests.get(f"https://spotapis.vercel.app/album/{album_id}")
             response.raise_for_status()
             data = response.json()
             
-            album_name = data['album_info']['title']
-            print(f"Album: {album_name} by {data['album_info']['owner']}")
+            album_info = data['album_info']
+            print(f"Album: {album_info['title']} by {album_info['owner']}")
+            print(f"Release Date: {album_info['release']}")
+            print(f"Total Tracks: {album_info['total']}")
             print("Getting songs from album...")
             
             return [TrackMetadata(
                 title=normalize_filename(track['title']),
-                artists=normalize_filename(', '.join(track['artists'])),
-                album=album_name,
+                artists=normalize_filename(track['artist']),
+                album=album_info['title'],
                 tid=track['id']
-            ) for track in data['track_list']], album_name
+            ) for track in data['track_list']], album_info['title']
         except requests.RequestException as e:
             if attempt < max_retries - 1:
                 print(f"Error fetching album metadata. Retrying... (Attempt {attempt + 2}/{max_retries})")
@@ -87,19 +91,20 @@ def fetch_playlist_metadata(link, max_retries=3):
     playlist_id = link.split("/")[-1].split("?")[0]
     for attempt in range(max_retries):
         try:
-            response = requests.get(f"https://spotifyapis.vercel.app/playlist/{playlist_id}")
+            response = requests.get(f"https://spotapis.vercel.app/playlist/{playlist_id}")
             response.raise_for_status()
             data = response.json()
             
-            playlist_name = data['playlist_info']['title']
-            print(f"Playlist: {playlist_name} by {data['playlist_info']['owner']}")
+            playlist_info = data['playlist_info']
+            print(f"Playlist: {playlist_info['title']} by {playlist_info['owner']}")
+            print(f"Total Tracks: {playlist_info['total']}")
             print("Getting songs from playlist...")
             
             return [TrackMetadata(
                 title=normalize_filename(track['title']),
-                artists=normalize_filename(', '.join(track['artists'])),
+                artists=normalize_filename(track['artist']),
                 tid=track['id']
-            ) for track in data['track_list']], playlist_name
+            ) for track in data['track_list']], playlist_info['title']
         except requests.RequestException as e:
             if attempt < max_retries - 1:
                 print(f"Error fetching playlist metadata. Retrying... (Attempt {attempt + 2}/{max_retries})")
