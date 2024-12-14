@@ -69,7 +69,6 @@ def fetch_album_metadata(link, max_retries=3):
             
             album_info = data['album_info']
             print(f"Album: {album_info['title']} by {album_info['owner']}")
-            print(f"Release Date: {album_info['release']}")
             print(f"Total Tracks: {album_info['total']}")
             print("Getting songs from album...")
             
