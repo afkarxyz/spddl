@@ -18,7 +18,7 @@ pip install requests
 
 ## Usage
 
-To use spddl, simply run the Code Runner.bat file:
+To use spddl, simply run the Runner.bat file:
 
 1. Double-click on `Runner.bat`
 2. Follow the on-screen prompts to enter the Spotify URL
