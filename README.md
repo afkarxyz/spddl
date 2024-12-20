@@ -1,5 +1,3 @@
-# spddl
-
 **spddl** is a Python script that allows users to download tracks, albums, and playlists directly from Spotify.
 
 ![image](https://github.com/user-attachments/assets/5e23249e-f6bf-48d9-815f-5af8608c5128)
